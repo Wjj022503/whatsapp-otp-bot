@@ -6,6 +6,7 @@ app.use(express.json());
 
 const client = new Client({
     puppeteer: {
+        headless: true,
         args: [
             "--no-sandbox",
             "--disable-setuid-sandbox",
@@ -13,12 +14,17 @@ const client = new Client({
             "--disable-accelerated-2d-canvas",
             "--no-first-run",
             "--no-zygote",
-            "--single-process", 
-            "--disable-gpu"
-        ],
-        headless: true
+            "--disable-gpu",
+            "--single-process",
+            "--no-extensions",
+            "--disable-infobars",
+            "--hide-scrollbars",
+            "--mute-audio",
+            "--disable-software-rasterizer"
+        ]
     }
 });
+
 
 client.on('qr', qr => {
     console.log('Scan this QR Code by opening this URL:');
