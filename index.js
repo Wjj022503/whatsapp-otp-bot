@@ -1,11 +1,26 @@
 const { Client } = require('whatsapp-web.js');
+const { Puppeteer } = require('whatsapp-web.js');
 const express = require('express');
 const qrcode = require('qrcode-terminal');
 
 const app = express();
 app.use(express.json());
 
-const client = new Client();
+const client = new Client({
+    puppeteer: {
+        args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-dev-shm-usage",
+            "--disable-accelerated-2d-canvas",
+            "--no-first-run",
+            "--no-zygote",
+            "--single-process", 
+            "--disable-gpu"
+        ],
+        headless: true
+    }
+});
 
 client.on('qr', qr => {
     qrcode.generate(qr, { small: true });
@@ -17,7 +32,6 @@ client.on('ready', () => {
 
 client.initialize();
 
-// API to send message
 app.post('/send', async (req, res) => {
     const { phone, message } = req.body;
 
@@ -30,7 +44,6 @@ app.post('/send', async (req, res) => {
     }
 });
 
-// Start server
-app.listen(3000, () => {
-    console.log('API server running on port 3000');
+app.listen(process.env.PORT || 3000, () => {
+    console.log('API server running');
 });
